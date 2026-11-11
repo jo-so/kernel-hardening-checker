@@ -947,7 +947,8 @@ def add_sysctl_checks(l: list[ChecklistObjType], arch: StrOrNone) -> None:
 
     # 'cut_attack_surface', 'kspp'
     l += [SysctlCheck('cut_attack_surface', 'kspp', 'kernel.dmesg_restrict', '1')]
-    l += [SysctlCheck('cut_attack_surface', 'kspp', 'kernel.perf_event_paranoid', '3')]
+    l += [OR(SysctlCheck('cut_attack_surface', 'kspp', 'kernel.perf_event_paranoid', '3'),
+             AND(KconfigCheck('-', '-', 'PERF_EVENTS', 'is not set'), have_kconfig))]
           # Without the custom patch that adds CONFIG_SECURITY_PERF_EVENTS_RESTRICT,
           # the value '3' has a similar effect to the value '2'. For more information, see:
           #  - https://lkml.org/lkml/2016/1/11/587
