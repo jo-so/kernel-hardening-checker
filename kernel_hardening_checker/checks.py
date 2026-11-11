@@ -955,7 +955,8 @@ def add_sysctl_checks(l: list[ChecklistObjType], arch: StrOrNone) -> None:
           #  - https://lwn.net/Articles/696216/
     l += [SysctlCheck('cut_attack_surface', 'kspp', 'dev.tty.ldisc_autoload', '0')]
     l += [SysctlCheck('cut_attack_surface', 'kspp', 'kernel.kptr_restrict', '2')]
-    l += [SysctlCheck('cut_attack_surface', 'kspp', 'dev.tty.legacy_tiocsti', '0')]
+    l += [OR(SysctlCheck('cut_attack_surface', 'kspp', 'dev.tty.legacy_tiocsti', '0'),
+             AND(KconfigCheck('-', '-', 'LEGACY_TIOCSTI', 'is not set'), have_kconfig))]
     l += [OR(SysctlCheck('cut_attack_surface', 'kspp', 'user.max_user_namespaces', '0'),
              SysctlCheck('cut_attack_surface', 'debian', 'kernel.unprivileged_userns_clone', '0'))]
              # 1) Debian-specific sysctl kernel.unprivileged_userns_clone is deprecated
